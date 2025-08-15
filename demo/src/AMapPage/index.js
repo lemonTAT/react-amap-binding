@@ -6,7 +6,7 @@ import {
 } from 'prop-types';
 import { hot } from 'react-hot-loader';
 import { withStyles } from '@material-ui/core/styles';
-import { AMap } from '@ibus/react-amap-binding';
+import { AMap } from '@vivilmt/react-amap-binding';
 
 const styles = (theme) => ({
   mapContainer: {
@@ -44,7 +44,7 @@ class AMapPage extends React.Component {
         <AMap
           {...others}
           // proxyUrl={'http://0.0.0.0:8082/amap'}
-          // version={'2.0'}
+          version={'2.0'}
         >
           {children}
         </AMap>

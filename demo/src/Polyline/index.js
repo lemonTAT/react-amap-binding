@@ -1,6 +1,6 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { Polyline } from '@ibus/react-amap-binding';
+import { Polyline } from '@vivilmt/react-amap-binding';
 import AMap from '../AMapPage';
 
 @hot(module)

@@ -1,6 +1,6 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { Loca } from '@ibus/react-amap-binding';
+import { Loca } from '@vivilmt/react-amap-binding';
 import AMap from '../AMapPage';
 
 @hot(module)

@@ -1,5 +1,5 @@
 {
-  "name": "@ibus/react-amap-binding",
+  "name": "@vivilmt/react-amap-binding",
   "version": "1.0.0-beta.0",
   "description": "A React binding for lbs AMap, allowing you to use AMap in React.",
   "main": "src/index.js",
@@ -65,7 +65,7 @@
     ]
   },
   "keywords": [
-     "ibus",
+    "ibus",
     "react",
     "amap",
     "react-amap",
