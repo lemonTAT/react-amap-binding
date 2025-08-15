@@ -36,7 +36,7 @@ export default function Router() {
         <Route exact path="/pathSimplifier" component={PathSimplifier} />
         <Route exact path="/massMarks" component={MassMarks} />
         <Route exact path="/polygon" component={Polygon} />
-        <Route exact path="/pathNavigator" component={PathNavigator}/>
+        <Route exact path="/pathNavigator" component={PathNavigator} />
         <Route exact path="/traffic" component={TileLayerTraffic} />
         <Route exact path="/infoWindow" component={InfoWindow} />
         <Route exact path="/polyline" component={Polyline} />

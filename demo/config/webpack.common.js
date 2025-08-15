@@ -18,7 +18,10 @@ module.exports = {
     rules: [
       {
         test: /(\.js|\.jsx)$/,
-        include: path.appSrc,
+        include: [
+          path.appSrc,
+          path.parentSrc,
+        ],
         loader: 'babel-loader',
       },
 

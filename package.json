@@ -1,7 +1,7 @@
 {
-  "name": "react-amap-binding",
-  "version": "1.0.2",
-  "description": "A React binding for lbs AMap",
+  "name": "@ibus/react-amap-binding",
+  "version": "1.0.0-beta.0",
+  "description": "A React binding for lbs AMap, allowing you to use AMap in React.",
   "main": "src/index.js",
   "scripts": {
     "prebuild": "rimraf build demo/node_modules/react-amap-binding",
@@ -22,8 +22,8 @@
     "preversion": "yarn test",
     "version": "yarn build && npm publish build"
   },
-  "repository": "git@github.com:marcosun/react-amap-binding.git",
-  "author": "marcosun <marcoinbristol@gmail.com>",
+  "repository": "git@github.com:lemonTAT/react-amap-binding.git",
+  "author": "vivi <vivilmt601@gmail.com>",
   "license": "MIT",
   "dependencies": {
     "lodash": "^4.17.5"
@@ -65,6 +65,7 @@
     ]
   },
   "keywords": [
+     "ibus",
     "react",
     "amap",
     "react-amap",

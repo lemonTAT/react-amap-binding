@@ -1,6 +1,6 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { Marker } from 'react-amap-binding';
+import { Marker } from '@ibus/react-amap-binding';
 import AMap from '../AMapPage';
 
 @hot(module)
@@ -41,7 +41,7 @@ class MarkerPage extends React.Component {
    * @param {Object} e - Event
    */
   handleClick = (map, target, e) => {
-    alert('You have clicked a marker icon');
+    console.log('You have clicked a marker icon', map, target, e);
   }
 
   render() {

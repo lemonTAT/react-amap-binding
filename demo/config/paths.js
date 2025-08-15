@@ -11,4 +11,6 @@ module.exports = {
   appPath: resolveApp('.'),
   appDist: resolveApp('dist'),
   appSrc: resolveApp('src'),
+  // 添加上层目录的 src 路径
+  parentSrc: resolveApp('../src'),
 };

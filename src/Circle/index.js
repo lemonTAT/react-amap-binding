@@ -5,6 +5,8 @@ import breakIfNotChildOfAMap from '../utils/breakIfNotChildOfAMap';
 import cloneDeep from '../utils/cloneDeep';
 import createEventCallback from '../utils/createEventCallback';
 import isShallowEqual from '../utils/isShallowEqual';
+import { bindInstanceEvent, removeInstanceEvent } from '../utils/instanceEventHandler';
+import version2Flag from '../utils/mapVersion2Flag';
 
 /**
  * Fields that need to be deep copied.
@@ -133,9 +135,7 @@ class Circle extends React.Component {
    * Destroy circle instance.
    */
   componentWillUnmount() {
-    this.AMapEventListeners.forEach((listener) => {
-      window.AMap.event.removeListener(listener);
-    });
+    removeInstanceEvent(this.circle, this.AMapEventListeners);
 
     this.circle.setMap(null);
     this.circle = null;
@@ -153,14 +153,7 @@ class Circle extends React.Component {
      */
     const eventCallbacks = this.parseEvents();
 
-    Object.keys(eventCallbacks).forEach((key) => {
-      const eventName = key.substring(2).toLowerCase();
-      const handler = eventCallbacks[key];
-
-      this.AMapEventListeners.push(
-        window.AMap.event.addListener(this.circle, eventName, handler),
-      );
-    });
+    bindInstanceEvent(this.circle, eventCallbacks, this.AMapEventListeners);
   }
 
   /**
@@ -218,6 +211,10 @@ class Circle extends React.Component {
   updateCircleWithAPI(apiName, previousProp, nextProp, newProp) {
     if (!isShallowEqual(previousProp, nextProp)) {
       this.circle[apiName](newProp);
+      // version 2.0 radius is a special property, it has to be handled differently.
+      if (version2Flag(window.AMap.version) && previousProp.radius !== nextProp.radius) {
+        this.circle.setRadius(newProp.radius);
+      }
     }
   }
 

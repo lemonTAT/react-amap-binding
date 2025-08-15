@@ -3,6 +3,8 @@ import PropTypes from 'prop-types';
 import AMapContext from '../AMapContext';
 import createEventCallback from '../utils/createEventCallback';
 import isShallowEqual from '../utils/isShallowEqual';
+import { bindInstanceEvent, removeInstanceEvent } from '../utils/instanceEventHandler';
+import version2Flag from '../utils/mapVersion2Flag';
 
 const mapContainerStyle = { width: '100%', height: '100%' };
 
@@ -46,15 +48,19 @@ class AMap extends React.PureComponent {
     /**
      * Whether it is http or https.
      */
-    protocol: PropTypes.oneOf(['http', 'https']),
+    onClick: PropTypes.func,
     /**
      * AMap UI version.
      */
-    uiVersion: PropTypes.string,
+    onComplete: PropTypes.func,
     /**
      * AMap javascript library version.
      */
-    version: PropTypes.string,
+    onDblClick: PropTypes.func,
+    /**
+     * self defined prop: AMap proxy url.
+     */
+    onDragEnd: PropTypes.func,
     /**
      * Event callback.
      * Signature:
@@ -63,32 +69,32 @@ class AMap extends React.PureComponent {
      * event: AMap event.
      */
     /* eslint-disable react/sort-prop-types,react/no-unused-prop-types */
-    onComplete: PropTypes.func,
-    onClick: PropTypes.func,
-    onDblClick: PropTypes.func,
-    onMapMove: PropTypes.func,
-    onHotspotClick: PropTypes.func,
-    onHotspotOver: PropTypes.func,
-    onHotspotOut: PropTypes.func,
-    onMoveStart: PropTypes.func,
-    onMoveEnd: PropTypes.func,
-    onZoomChange: PropTypes.func,
-    onZoomStart: PropTypes.func,
-    onZoomEnd: PropTypes.func,
-    onMouseMove: PropTypes.func,
-    onMouseWheel: PropTypes.func,
-    onMouseOver: PropTypes.func,
-    onMouseOut: PropTypes.func,
-    onMouseUp: PropTypes.func,
-    onMouseDown: PropTypes.func,
-    onRightClick: PropTypes.func,
-    onDragStart: PropTypes.func,
     onDragging: PropTypes.func,
-    onDragEnd: PropTypes.func,
+    onDragStart: PropTypes.func,
+    onHotspotClick: PropTypes.func,
+    onHotspotOut: PropTypes.func,
+    onHotspotOver: PropTypes.func,
+    onMapMove: PropTypes.func,
+    onMouseDown: PropTypes.func,
+    onMouseMove: PropTypes.func,
+    onMouseOut: PropTypes.func,
+    onMouseOver: PropTypes.func,
+    onMouseUp: PropTypes.func,
+    onMouseWheel: PropTypes.func,
+    onMoveEnd: PropTypes.func,
+    onMoveStart: PropTypes.func,
     onResize: PropTypes.func,
-    onTouchStart: PropTypes.func,
-    onTouchMove: PropTypes.func,
+    onRightClick: PropTypes.func,
     onTouchEnd: PropTypes.func,
+    onTouchMove: PropTypes.func,
+    onTouchStart: PropTypes.func,
+    onZoomChange: PropTypes.func,
+    onZoomEnd: PropTypes.func,
+    onZoomStart: PropTypes.func,
+    protocol: PropTypes.oneOf(['http', 'https']),
+    proxyUrl: PropTypes.string,
+    uiVersion: PropTypes.string,
+    version: PropTypes.string,
     /* eslint-enable */
   };
 
@@ -208,8 +214,11 @@ class AMap extends React.PureComponent {
   /**
    * Create script tag to require AMap library.
    */
-  static requireAMap({ appKey, protocol, version }) {
-    const src = `${protocol}://webapi.amap.com/maps?v=${version}&key=${appKey}`;
+  static requireAMap({ appKey, protocol, version, proxyUrl }) {
+    let src = `${protocol}://webapi.amap.com/maps?v=${version}&key=${appKey}`;
+    if (proxyUrl) {
+      src = `${proxyUrl}/maps?v=${version}&key=${appKey}`;
+    }
 
     return AMap.loadScript(src);
   }
@@ -217,8 +226,11 @@ class AMap extends React.PureComponent {
   /**
    * Create script tag to require AMapUI library.
    */
-  static async requireAMapUI({ protocol, version }) {
-    const src = `${protocol}://webapi.amap.com/ui/${version}/main-async.js`;
+  static async requireAMapUI({ protocol, version, proxyUrl }) {
+    let src = `${protocol}://webapi.amap.com/ui/${version}/main-async.js`;
+    if (proxyUrl) {
+      src = `${proxyUrl}/ui/${version}/main-async.js`;
+    }
 
     await AMap.loadScript(src);
 
@@ -228,8 +240,11 @@ class AMap extends React.PureComponent {
   /**
    * Create script tag to require Loca library.
    */
-  static requireLoca({ appKey, protocol, version }) {
-    const src = `${protocol}://webapi.amap.com/loca?key=${appKey}&v=${version}`;
+  static requireLoca({ appKey, protocol, version, proxyUrl }) {
+    let src = `${protocol}://webapi.amap.com/loca?key=${appKey}&v=${version}`;
+    if (proxyUrl) {
+      src = `${proxyUrl}/loca?key=${appKey}&v=${version}`;
+    }
 
     return AMap.loadScript(src);
   }
@@ -304,9 +319,7 @@ class AMap extends React.PureComponent {
      * AMapEventListeners and map instance are assigned only if AMap library has been loaded.
      */
     if (map !== void 0) {
-      this.AMapEventListeners.forEach((listener) => {
-        window.AMap.event.removeListener(listener);
-      });
+      removeInstanceEvent(map, this.AMapEventListeners);
 
       map.destroy();
     }
@@ -324,14 +337,7 @@ class AMap extends React.PureComponent {
      */
     this.eventCallbacks = this.parseEvents();
 
-    Object.keys(this.eventCallbacks).forEach((key) => {
-      const eventName = key.substring(2).toLowerCase();
-      const handler = this.eventCallbacks[key];
-
-      this.AMapEventListeners.push(
-        window.AMap.event.addListener(this.map, eventName, handler),
-      );
-    });
+    bindInstanceEvent(this.map, this.eventCallbacks, this.AMapEventListeners);
   }
 
   /**
@@ -344,15 +350,17 @@ class AMap extends React.PureComponent {
       protocol,
       uiVersion,
       version,
+      proxyUrl,
     } = this.props;
 
     if (window.AMap === void 0) {
-      await AMap.requireAMap({ appKey, protocol, version });
+      await AMap.requireAMap({ appKey, protocol, version, proxyUrl });
       /**
        * Load AMapUI and Loca in parallel.
        */
-      const AMapUI = AMap.requireAMapUI({ protocol, version: uiVersion });
-      const Loca = AMap.requireLoca({ appKey, protocol, version: locaVersion });
+      const newUiVersion = version2Flag(version) ? '1.1' : uiVersion;
+      const AMapUI = AMap.requireAMapUI({ protocol, version: newUiVersion, proxyUrl });
+      const Loca = AMap.requireLoca({ appKey, protocol, version: locaVersion, proxyUrl });
       await AMapUI;
       await Loca;
     }

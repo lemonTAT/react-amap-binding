@@ -5,6 +5,7 @@ import breakIfNotChildOfAMap from '../utils/breakIfNotChildOfAMap';
 import cloneDeep from '../utils/cloneDeep';
 import createEventCallback from '../utils/createEventCallback';
 import isShallowEqual from '../utils/isShallowEqual';
+import { bindInstanceEvent, removeInstanceEvent } from '../utils/instanceEventHandler';
 
 /**
  * Fields that need to be deep copied.
@@ -130,9 +131,7 @@ class Polyline extends React.Component {
    * Destroy polyline instance.
    */
   componentWillUnmount() {
-    this.AMapEventListeners.forEach((listener) => {
-      window.AMap.event.removeListener(listener);
-    });
+    removeInstanceEvent(this.polyline, this.AMapEventListeners);
 
     this.polyline.setMap(null);
     this.polyline = null;
@@ -150,14 +149,7 @@ class Polyline extends React.Component {
      */
     const eventCallbacks = this.parseEvents();
 
-    Object.keys(eventCallbacks).forEach((key) => {
-      const eventName = key.substring(2).toLowerCase();
-      const handler = eventCallbacks[key];
-
-      this.AMapEventListeners.push(
-        window.AMap.event.addListener(this.polyline, eventName, handler),
-      );
-    });
+    bindInstanceEvent(this.polyline, eventCallbacks, this.AMapEventListeners);
   }
 
   /**

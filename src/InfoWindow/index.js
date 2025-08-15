@@ -5,6 +5,7 @@ import breakIfNotChildOfAMap from '../utils/breakIfNotChildOfAMap';
 import cloneDeep from '../utils/cloneDeep';
 import createEventCallback from '../utils/createEventCallback';
 import isShallowEqual from '../utils/isShallowEqual';
+import { bindInstanceEvent, removeInstanceEvent } from '../utils/instanceEventHandler';
 
 /**
  * Fields that need to be deep copied.
@@ -173,9 +174,7 @@ class InfoWindow extends React.Component {
    * Destroy infoWindow instance.
    */
   componentWillUnmount() {
-    this.AMapEventListeners.forEach((listener) => {
-      window.AMap.event.removeListener(listener);
-    });
+    removeInstanceEvent(this.infoWindow, this.AMapEventListeners);
 
     this.infoWindow.setMap(null);
     this.infoWindow = null;
@@ -193,14 +192,7 @@ class InfoWindow extends React.Component {
      */
     const eventCallbacks = this.parseEvents();
 
-    Object.keys(eventCallbacks).forEach((key) => {
-      const eventName = key.substring(2).toLowerCase();
-      const handler = eventCallbacks[key];
-
-      this.AMapEventListeners.push(
-        window.AMap.event.addListener(this.infoWindow, eventName, handler),
-      );
-    });
+    bindInstanceEvent(this.infoWindow, eventCallbacks, this.AMapEventListeners);
   }
 
   /**

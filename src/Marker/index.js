@@ -6,6 +6,7 @@ import cloneDeep from '../utils/cloneDeep';
 import createEventCallback from '../utils/createEventCallback';
 import isNullVoid from '../utils/isNullVoid';
 import isShallowEqual from '../utils/isShallowEqual';
+import { bindInstanceEvent, removeInstanceEvent } from '../utils/instanceEventHandler';
 
 /**
  * Fields that need to be deep copied.
@@ -321,9 +322,7 @@ class Marker extends React.Component {
    * Destroy marker instance.
    */
   componentWillUnmount() {
-    this.AMapEventListeners.forEach((listener) => {
-      window.AMap.event.removeListener(listener);
-    });
+    removeInstanceEvent(this.marker, this.AMapEventListeners);
 
     this.marker.setMap(null);
     this.marker = null;
@@ -341,14 +340,7 @@ class Marker extends React.Component {
      */
     const eventCallbacks = this.parseEvents();
 
-    Object.keys(eventCallbacks).forEach((key) => {
-      const eventName = key.substring(2).toLowerCase();
-      const handler = eventCallbacks[key];
-
-      this.AMapEventListeners.push(
-        window.AMap.event.addListener(this.marker, eventName, handler),
-      );
-    });
+    bindInstanceEvent(this.marker, eventCallbacks, this.AMapEventListeners);
   }
 
   /**

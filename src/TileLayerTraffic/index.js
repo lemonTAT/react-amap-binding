@@ -4,6 +4,7 @@ import AMapContext from '../AMapContext';
 import breakIfNotChildOfAMap from '../utils/breakIfNotChildOfAMap';
 import createEventCallback from '../utils/createEventCallback';
 import isShallowEqual from '../utils/isShallowEqual';
+import { bindInstanceEvent, removeInstanceEvent } from '../utils/instanceEventHandler';
 
 /**
  * TileLayerTraffic binding.
@@ -93,9 +94,7 @@ class TileLayerTraffic extends React.Component {
    * Destroy tileLayerTraffic instance.
    */
   componentWillUnmount() {
-    this.AMapEventListeners.forEach((listener) => {
-      window.AMap.event.removeListener(listener);
-    });
+    removeInstanceEvent(this.tileLayerTraffic, this.AMapEventListeners);
 
     this.tileLayerTraffic.setMap(null);
     this.tileLayerTraffic = null;
@@ -113,14 +112,7 @@ class TileLayerTraffic extends React.Component {
      */
     const eventCallbacks = this.parseEvents();
 
-    Object.keys(eventCallbacks).forEach((key) => {
-      const eventName = key.substring(2).toLowerCase();
-      const handler = eventCallbacks[key];
-
-      this.AMapEventListeners.push(
-        window.AMap.event.addListener(this.tileLayerTraffic, eventName, handler),
-      );
-    });
+    bindInstanceEvent(this.tileLayerTraffic, eventCallbacks, this.AMapEventListeners);
   }
 
   /**

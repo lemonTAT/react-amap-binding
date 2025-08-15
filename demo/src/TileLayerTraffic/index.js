@@ -1,6 +1,6 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { TileLayerTraffic } from 'react-amap-binding';
+import { TileLayerTraffic } from '@ibus/react-amap-binding';
 import AMap from '../AMapPage';
 
 @hot(module)

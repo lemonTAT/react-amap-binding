@@ -5,6 +5,7 @@ import breakIfNotChildOfAMap from '../utils/breakIfNotChildOfAMap';
 import cloneDeep from '../utils/cloneDeep';
 import createEventCallback from '../utils/createEventCallback';
 import isShallowEqual from '../utils/isShallowEqual';
+import { bindInstanceEvent, removeInstanceEvent } from '../utils/instanceEventHandler';
 
 /**
  * Fields that need to be deep copied.
@@ -102,7 +103,7 @@ class BezierCurve extends React.Component {
 
     this.bindEvents();
 
-    typeof onComplete === 'function' && onComplete(this.bezierCurve);
+    typeof onComplete === 'function' && onComplete(map, this.bezierCurve);
   }
 
   /**
@@ -131,9 +132,7 @@ class BezierCurve extends React.Component {
    * Destroy bezierCurve instance.
    */
   componentWillUnmount() {
-    this.AMapEventListeners.forEach((listener) => {
-      window.AMap.event.removeListener(listener);
-    });
+    removeInstanceEvent(this.bezierCurve, this.AMapEventListeners);
 
     this.bezierCurve.setMap(null);
     this.bezierCurve = null;
@@ -151,14 +150,7 @@ class BezierCurve extends React.Component {
      */
     const eventCallbacks = this.parseEvents();
 
-    Object.keys(eventCallbacks).forEach((key) => {
-      const eventName = key.substring(2).toLowerCase();
-      const handler = eventCallbacks[key];
-
-      this.AMapEventListeners.push(
-        window.AMap.event.addListener(this.bezierCurve, eventName, handler),
-      );
-    });
+    bindInstanceEvent(this.bezierCurve, eventCallbacks, this.AMapEventListeners);
   }
 
   /**

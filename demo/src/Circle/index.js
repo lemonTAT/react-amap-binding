@@ -1,6 +1,6 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { Circle } from 'react-amap-binding';
+import { Circle } from '@ibus/react-amap-binding';
 import AMap from '../AMapPage';
 
 @hot(module)
@@ -27,7 +27,10 @@ class CirclePage extends React.Component {
       this.setState((state) => {
         return {
           circles: [
-            ...state.circles.slice(0,1),
+            {
+              ...state.circles[0],
+              visible: false,
+            },
             {
               ...state.circles[1],
               radius: 1000,
@@ -53,6 +56,7 @@ class CirclePage extends React.Component {
       circles,
     } = this.state;
 
+    console.log('1111:::', circles)
     return (
       <AMap>
         {
