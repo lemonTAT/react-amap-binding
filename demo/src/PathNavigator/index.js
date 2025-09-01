@@ -1,6 +1,6 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { PathNavigator } from '@vivilmt/react-amap-binding';
+import { PathNavigator } from '@gjyibus/react-amap-binding';
 import PathSimplifier from '../PathSimplifier';
 
 @hot(module)

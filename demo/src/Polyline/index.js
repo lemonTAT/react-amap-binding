@@ -1,6 +1,6 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { Polyline } from '@vivilmt/react-amap-binding';
+import { Polyline } from '@gjyibus/react-amap-binding';
 import AMap from '../AMapPage';
 
 @hot(module)
@@ -23,9 +23,20 @@ class PolylinePage extends React.Component {
         [120.188831, 30.181046],
         [120.188144, 30.165166],
       ],
-      strokeWeight: 6,
-      strokeColor: '#3366FF',
+      strokeWeight: 6, // 线条宽度，默认为 1
+      strokeColor: '#1E9493', // 线条颜色
+      lineJoin: 'round', // 折线拐点连接处样式
+      lineCap: 'round',
+      strokeStyle: 'dashed',
+      strokeDasharray: [10, 5],
+      strokeOpacity: 1,
     };
+  }
+
+  componentDidMount() {
+    setTimeout(() => {
+      this.map.setFitView();
+    }, 1000 * 3)
   }
 
   /**
@@ -56,7 +67,7 @@ class PolylinePage extends React.Component {
 
   render() {
     return (
-      <AMap>
+      <AMap onComplete={map => { this.map = map; }}>
         <Polyline
           {...this.state}
           onMouseOver={this.handleMouseOver}

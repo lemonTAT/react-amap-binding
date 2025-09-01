@@ -1,7 +1,7 @@
 import React from 'react';
 import { node } from 'prop-types';
 import { hot } from 'react-hot-loader';
-import { PathSimplifier } from '@vivilmt/react-amap-binding';
+import { PathSimplifier } from '@gjyibus/react-amap-binding';
 import AMap from '../AMapPage';
 
 @hot(module)

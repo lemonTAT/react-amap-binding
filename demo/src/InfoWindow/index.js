@@ -1,6 +1,6 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import { InfoWindow } from '@vivilmt/react-amap-binding';
+import { InfoWindow } from '@gjyibus/react-amap-binding';
 import AMap from '../AMapPage';
 
 @hot(module)

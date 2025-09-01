@@ -6,7 +6,7 @@ import {
 } from 'prop-types';
 import { hot } from 'react-hot-loader';
 import { withStyles } from '@material-ui/core/styles';
-import { AMap } from '@vivilmt/react-amap-binding';
+import { AMap } from '@gjyibus/react-amap-binding';
 
 const styles = (theme) => ({
   mapContainer: {
