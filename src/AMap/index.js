@@ -424,6 +424,9 @@ class AMap extends React.PureComponent {
     }
 
     if (!isShallowEqual(previousCompareProp, nextCompareProp)) {
+      if (apiName === 'setCenter' && !nextProp) {
+        return;
+      }
       this.map[apiName](nextProp);
     }
   }
