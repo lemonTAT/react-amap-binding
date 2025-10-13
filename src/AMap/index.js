@@ -35,6 +35,7 @@ class AMap extends React.PureComponent {
        */
       PropTypes.object,
     ]),
+    plugins: PropTypes.arrayOf(PropTypes.string),
     /**
      * Child components.
      */
@@ -214,10 +215,13 @@ class AMap extends React.PureComponent {
   /**
    * Create script tag to require AMap library.
    */
-  static requireAMap({ appKey, protocol, version, proxyUrl }) {
+  static requireAMap({ appKey, protocol, version, proxyUrl, plugins }) {
     let src = `${protocol}://webapi.amap.com/maps?v=${version}&key=${appKey}`;
     if (proxyUrl) {
       src = `${proxyUrl}/maps?v=${version}&key=${appKey}`;
+    }
+    if (Array.isArray(plugins)) {
+      src += `&plugin=${plugins.join(',')}`;
     }
 
     return AMap.loadScript(src);
@@ -351,10 +355,11 @@ class AMap extends React.PureComponent {
       uiVersion,
       version,
       proxyUrl,
+      plugins,
     } = this.props;
 
     if (window.AMap === void 0) {
-      await AMap.requireAMap({ appKey, protocol, version, proxyUrl });
+      await AMap.requireAMap({ appKey, protocol, version, proxyUrl, plugins });
       /**
        * Load AMapUI and Loca in parallel.
        */
