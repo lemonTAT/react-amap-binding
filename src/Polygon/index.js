@@ -6,6 +6,7 @@ import cloneDeep from '../utils/cloneDeep';
 import createEventCallback from '../utils/createEventCallback';
 import isShallowEqual from '../utils/isShallowEqual';
 import { bindInstanceEvent, removeInstanceEvent } from '../utils/instanceEventHandler';
+import { isEqual } from 'lodash';
 
 /**
  * Fields that need to be deep copied.
@@ -118,6 +119,8 @@ class Polygon extends React.Component {
 
     this.toggleVisible(this.polygonOptions.visible, nextPolygonOptions.visible);
 
+    this.changePath(this.polygonOptions.path, nextPolygonOptions.path);
+
     this.updatePolygonWithApi('setOptions', this.polygonOptions, nextPolygonOptions,
       newPolygonOptions);
 
@@ -197,6 +200,12 @@ class Polygon extends React.Component {
     if (!isShallowEqual(previousProp, nextProp)) {
       if (nextProp === true) this.polygon.show();
       if (nextProp === false) this.polygon.hide();
+    }
+  }
+
+  changePath(prevPath, nextPath) {
+    if (!isEqual(prevPath, nextPath)) {
+      this.polygon.setPath(nextPath);
     }
   }
 
