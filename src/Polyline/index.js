@@ -6,6 +6,7 @@ import cloneDeep from '../utils/cloneDeep';
 import createEventCallback from '../utils/createEventCallback';
 import isShallowEqual from '../utils/isShallowEqual';
 import { bindInstanceEvent, removeInstanceEvent } from '../utils/instanceEventHandler';
+import { isEqual } from 'lodash';
 
 /**
  * Fields that need to be deep copied.
@@ -118,6 +119,8 @@ class Polyline extends React.Component {
 
     this.toggleVisible(this.polylineOptions.visible, nextPolylineOptions.visible);
 
+    this.changePath(this.polylineOptions.path, nextPolylineOptions.path);
+
     this.updatePolylineWithAPI('setOptions', this.polylineOptions, nextPolylineOptions,
       newPolylineOptions);
 
@@ -197,6 +200,12 @@ class Polyline extends React.Component {
     if (!isShallowEqual(previousProp, nextProp)) {
       if (nextProp === true) this.polyline.show();
       if (nextProp === false) this.polyline.hide();
+    }
+  }
+
+  changePath(prevPath, nextPath) {
+    if (!isEqual(prevPath, nextPath)) {
+      this.polyline.setPath(nextPath);
     }
   }
 

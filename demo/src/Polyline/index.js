@@ -27,14 +27,19 @@ class PolylinePage extends React.Component {
       strokeColor: '#1E9493', // 线条颜色
       lineJoin: 'round', // 折线拐点连接处样式
       lineCap: 'round',
-      strokeStyle: 'dashed',
-      strokeDasharray: [10, 5],
+      // strokeStyle: 'dashed',
+      // strokeDasharray: [10, 5],
       strokeOpacity: 1,
     };
   }
 
   componentDidMount() {
     setTimeout(() => {
+      this.setState({ path: [
+          [120.172493, 30.263516],
+          [120.172123, 30.233494],
+          [120.172593, 30.239414],
+        ] })
       this.map.setFitView();
     }, 1000 * 3)
   }
