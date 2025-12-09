@@ -48,7 +48,11 @@ class TileLayerTraffic extends React.Component {
       ...tileLayerTrafficOptions
     } = props;
 
-    return tileLayerTrafficOptions;
+    return {
+      opacity: 1,
+      zIndex: 4,
+      ...tileLayerTrafficOptions,
+    };
   }
 
   /**

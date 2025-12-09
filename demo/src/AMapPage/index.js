@@ -45,6 +45,7 @@ class AMapPage extends React.Component {
           {...others}
           // proxyUrl={'http://0.0.0.0:8082/amap'}
           version={'2.0'}
+          mapStyle={'amap://styles/24e5c77d4e3a7bc131df1b6dbafde743'}
         >
           {children}
         </AMap>
